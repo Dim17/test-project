@@ -1,0 +1,58 @@
+version: '3.5'
+services:
+
+  # application (code)
+  app:
+    restart: always
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /app
+    volumes:
+      - ${PROJECT_DIR}:/app
+    networks:
+      - backend
+    environment:
+      - DB_NAME=test-project
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOSTNAME=database
+
+  # http server
+  web:
+    restart: always
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    working_dir: /app
+    networks:
+      - backend
+    volumes:
+      - ${PROJECT_DIR}:/app
+    ports:
+      - 9090:80
+
+  # database
+  database:
+    restart: always
+    image: postgres:9.6
+    networks:
+      - backend
+    environment:
+      - POSTGRES_DB=test-project
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 54321:5432
+
+  # adminer
+  adminer:
+    image: adminer
+    networks:
+      - backend
+    ports:
+      - 9999:8080
+
+networks:
+  backend:
+    driver: "bridge"
