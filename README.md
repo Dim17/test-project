@@ -1,9 +1,10 @@
 Test Project
 -
 
-requirements: 
- - docker
- - docker-compose
+Requirements:
+- 
+- docker
+- docker-compose
  
 Build/Up containers:
 -
@@ -16,8 +17,8 @@ Install dependency:
 
 Migrate db and populate it with template data:
 -
-- docker exec test-project_app_1 php bins/console doctrine:migration:migrate
-- docker exec test-project_app_1 php bins/console doctrine:fixture:load
+- docker exec test-project_app_1 php bin/console doctrine:migration:migrate
+- docker exec test-project_app_1 php bin/console doctrine:fixtures:load
 
 Template params for request:
 -
