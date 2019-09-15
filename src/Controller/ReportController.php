@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Controller;
 
@@ -40,8 +41,9 @@ class ReportController extends AbstractController
      * @param ReportRequestConstraint $constraint
      * @return JsonResponse
      * @throws \App\Exceptions\ValidationException
+     * @throws \App\Exceptions\NothingFoundException
      */
-    public function getReport(Request $request, ReportRequestConstraint $constraint)
+    public function getReport(Request $request, ReportRequestConstraint $constraint): JsonResponse
     {
         $data = [
             'from'     => $request->get('from'),

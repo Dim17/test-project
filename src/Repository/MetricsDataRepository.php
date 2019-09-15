@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Repository;
 
@@ -30,7 +31,8 @@ class MetricsDataRepository extends ServiceEntityRepository
         JOIN metrics ON metrics_data.metrics_id = metrics.id
         WHERE created_at BETWEEN :from and :to
         AND metrics.name IN (:metrics)
-        GROUP BY report_period, metrics.name';
+        GROUP BY report_period, metrics.name
+        ORDER BY report_period';
 
         $rsm = new ResultSetMapping();
         $rsm->addScalarResult('report_period', 'report_period');
