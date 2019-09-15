@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use App\Entity\MetricsData;
+use App\Exceptions\NothingFoundException;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ReportService
@@ -22,6 +23,10 @@ class ReportService
     public function getReport(array $params)
     {
         $report = $this->entityManager->getRepository(MetricsData::class)->getReport($params);
+
+        if (!$report) {
+            throw new NothingFoundException();
+        }
 
         return $report;
     }
