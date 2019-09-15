@@ -1,0 +1,4 @@
+get_report:
+  path: /
+  controller: App\Controller\ReportController::getReport
+  methods: GET

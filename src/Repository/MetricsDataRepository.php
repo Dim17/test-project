@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\MetricsData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Connection;
+use Doctrine\ORM\Query\ResultSetMapping;
 
 /**
  * @method MetricsData|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,29 @@ class MetricsDataRepository extends ServiceEntityRepository
         parent::__construct($registry, MetricsData::class);
     }
 
-    // /**
-    //  * @return MetricsData[] Returns an array of MetricsData objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function getReport(array $params)
     {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('m.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $query = 'SELECT date_trunc(:reportPeriod, created_at) as report_period,
+        SUM(metrics_data.value) as sum_value,
+        metrics.name
+        FROM metrics_data
+        JOIN metrics ON metrics_data.metrics_id = metrics.id
+        WHERE created_at BETWEEN :from and :to
+        AND metrics.name IN (:metrics)
+        GROUP BY report_period, metrics.name';
 
-    /*
-    public function findOneBySomeField($value): ?MetricsData
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('m.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        $rsm = new ResultSetMapping();
+        $rsm->addScalarResult('report_period', 'report_period');
+        $rsm->addScalarResult('sum_value', 'sum_value');
+        $rsm->addScalarResult('name', 'name');
+
+        $query = $this->getEntityManager()->createNativeQuery($query, $rsm);
+
+        $query->setParameters(['from'         => $params['from'],
+                               'to'           => $params['to'],
+                               'reportPeriod' => $params['group_by']]);
+        $query->setParameter('metrics', $params['metrics'], Connection::PARAM_STR_ARRAY);
+
+        return $query->getResult();
     }
-    */
 }
