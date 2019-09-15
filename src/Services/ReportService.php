@@ -21,7 +21,7 @@ class ReportService
         $this->entityManager = $entityManager;
     }
 
-    public function getReport(array $params)
+    public function get(array $params)
     {
         $report = $this->entityManager->getRepository(MetricsData::class)->getReport($params);
 

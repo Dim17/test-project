@@ -54,7 +54,7 @@ class ReportController extends AbstractController
 
         $this->validator->validate($data, $constraint);
 
-        $report = $this->reportService->getReport($data);
+        $report = $this->reportService->get($data);
 
         return new JsonResponse($report, 200);
     }
